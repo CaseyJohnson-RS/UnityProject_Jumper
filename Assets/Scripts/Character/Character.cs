@@ -1,4 +1,6 @@
+using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Events;
 
 public class Character : MonoBehaviour
 {
@@ -7,6 +9,10 @@ public class Character : MonoBehaviour
 
     [SerializeField]
     private LayerCheckComponent layerChecker;
+    [SerializeField]
+    private LineRenderer lineRenderer;
+
+    public UnityEvent OnDie;
 
     private Rigidbody2D _rb;
     private bool isGrounded = false;
@@ -50,7 +56,71 @@ public class Character : MonoBehaviour
 
         alive = false;
         _rb.simulated = false;
+        OnDie?.Invoke();
 
+    }
+
+    public void StopStratching()
+    {
+        lineRenderer.enabled = false;
+    }
+
+    public void StratchTrajectory(Vector2 direction)
+    {
+
+        if(alive && isGrounded && _rb.velocity.magnitude <= 0.15f)
+        {
+            lineRenderer.enabled = true;
+
+            Vector3[] list = SimulateArch(
+                transform.position,
+                direction.normalized,
+                direction.magnitude * maxJumpForce,
+                _rb.mass);
+
+            lineRenderer.positionCount = list.Length;
+
+            for ( int i = 0; i < list.Length;++i )
+            {
+                lineRenderer.SetPosition(i, list[i]);
+            }
+            
+        }
+
+    }
+
+    private Vector3[] SimulateArch(Vector2 launchPosition, Vector2 dir, float _force, float _mass, float timeStepInterval = 0.05f, float duration = 4f)
+    {
+        int n = (int)(duration / timeStepInterval);
+
+        List<Vector3> list = new List<Vector3>();
+
+        float velocity = _force / _mass;
+        
+        for(int i = 0; i < n; i++)
+        {
+            Vector2 calculatedPosition = launchPosition + dir * i * velocity * timeStepInterval;
+
+            calculatedPosition.y += Physics2D.gravity.y / 2 * Mathf.Pow(i * timeStepInterval, 2);
+
+            list.Add(calculatedPosition);
+
+            if (i > 0 && CheckForCollision(list[i-1], calculatedPosition))
+            {
+                break;
+            }
+
+        }
+
+        return list.ToArray();
+        
+    }
+
+    private bool CheckForCollision(Vector2 start, Vector2 end)
+    {
+        RaycastHit2D hit = Physics2D.Raycast(start, end - start, 0.75f, LayerMask.GetMask("Ground"));
+
+        return (hit.collider != null);
     }
 
 }

@@ -32,7 +32,9 @@ public class GameController : MonoBehaviour, IGamePlayListener
 
     public void OnPlay()
     {
+
         StartGame();
+
     }
 
     // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
@@ -55,6 +57,7 @@ public class GameController : MonoBehaviour, IGamePlayListener
 
     }
 
+    [ContextMenu("Play")]
     private void StartGame()
     {
         movingController._chr = spawnedCharacter.GetComponent<Character>();

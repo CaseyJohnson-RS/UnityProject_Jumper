@@ -16,4 +16,17 @@ public class MovingController : MonoBehaviour
         );
 
     }
+
+    public void Stretching(Vector2 vec)
+    {
+        _chr?.StratchTrajectory(new Vector2(
+            vec.x <= maxAmplitudeX ? vec.x : maxAmplitudeX,
+            vec.y <= maxAmplitudeY ? vec.y : maxAmplitudeY)
+        );
+    }
+
+    public void OnFingerUp()
+    {
+        _chr?.StopStratching();
+    }
 }

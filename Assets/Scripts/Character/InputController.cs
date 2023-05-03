@@ -6,10 +6,19 @@ public class InputController : MonoBehaviour
     private MovingController controller;
     private Vector2 downMousePosition;
 
+    private bool pressed = false;
+
     void Update()
     {
         SlideInput();
     }
+
+    private void FixedUpdate()
+    {
+        Stretching();
+    }
+
+    // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
 
     /// <summary>
     /// —читывает слайды мыши
@@ -20,6 +29,7 @@ public class InputController : MonoBehaviour
         {
 
             downMousePosition = Input.mousePosition;
+            pressed = true;
 
         }
         else if (Input.GetMouseButtonUp(0))
@@ -33,7 +43,29 @@ public class InputController : MonoBehaviour
                 )
             );
 
+            pressed = false;
+
+            controller.OnFingerUp();
+
         }
+
+    }
+
+    void Stretching()
+    {
+        if (pressed)
+        {
+
+            Vector2 upMousePosition = Input.mousePosition;
+
+            controller.Stretching(new Vector2(
+                (downMousePosition.x - upMousePosition.x) / Screen.width,
+                (downMousePosition.y - upMousePosition.y) / Screen.height
+                )
+            );
+
+        }
+
     }
 
     /// <summary>
