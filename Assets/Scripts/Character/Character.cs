@@ -18,6 +18,7 @@ public class Character : MonoBehaviour
     private bool isGrounded = false;
 
     private bool alive = true;
+    private bool isMovable = false;
 
     // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
 
@@ -28,49 +29,52 @@ public class Character : MonoBehaviour
 
     private void Update()
     {
-        UpdateIsGrounded();
+        UpdateIsMovable();
     }
 
     // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
 
-    private void UpdateIsGrounded()
+    void UpdateIsMovable()
     {
-        
+        CheckGrounded();
+
+        isMovable = alive && isGrounded && _rb.velocity.magnitude <= 0.15f;
+    }
+
+    private void CheckGrounded()
+    {
         if(alive)
             
             isGrounded = layerChecker.isTouched;
-
     }
 
     public void Jump(Vector2 direction)
     {
-
-        if(alive && isGrounded && _rb.velocity.magnitude <= 0.15f)
+        if(isMovable)
 
             _rb.AddForce(direction * maxJumpForce, ForceMode2D.Impulse);
-
     }
 
     public void Die()
     {
-
         alive = false;
-        _rb.simulated = false;
-        OnDie?.Invoke();
 
+        _rb.simulated = false;
+
+        OnDie?.Invoke();
     }
 
-    public void StopStratching()
+    public void StopStratchingTrajectory()
     {
-        lineRenderer.enabled = false;
+        lineRenderer.enabled = false; //Скрываем траекторию
     }
 
     public void StratchTrajectory(Vector2 direction)
     {
 
-        if(alive && isGrounded && _rb.velocity.magnitude <= 0.15f)
+        if(isMovable)
         {
-            lineRenderer.enabled = true;
+            lineRenderer.enabled = true; // Показываем траекторию
 
             Vector3[] list = SimulateArch(
                 transform.position,

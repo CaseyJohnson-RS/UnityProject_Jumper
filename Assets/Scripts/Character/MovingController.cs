@@ -27,6 +27,6 @@ public class MovingController : MonoBehaviour
 
     public void OnFingerUp()
     {
-        _chr?.StopStratching();
+        _chr?.StopStratchingTrajectory();
     }
 }

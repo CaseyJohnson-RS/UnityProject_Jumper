@@ -15,7 +15,7 @@ public class InputController : MonoBehaviour
 
     private void FixedUpdate()
     {
-        Stretching();
+        StretchingInput();
     }
 
     // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
@@ -51,11 +51,10 @@ public class InputController : MonoBehaviour
 
     }
 
-    void Stretching()
+    void StretchingInput()
     {
         if (pressed)
         {
-
             Vector2 upMousePosition = Input.mousePosition;
 
             controller.Stretching(new Vector2(
