@@ -2,11 +2,15 @@ using UnityEngine;
 
 public class InputController : MonoBehaviour
 {
-    [SerializeField]
     private MovingController controller;
     private Vector2 downMousePosition;
 
     private bool pressed = false;
+
+    private void Start()
+    {
+        controller = ServiceProvider.GetService<MovingController>();
+    }
 
     void Update()
     {
@@ -37,7 +41,7 @@ public class InputController : MonoBehaviour
 
             Vector2 upMousePosition = Input.mousePosition;
 
-            controller.Swipe(new Vector2(
+            controller?.Swipe(new Vector2(
                 (downMousePosition.x - upMousePosition.x) / Screen.width,
                 (downMousePosition.y - upMousePosition.y) / Screen.height
                 )
@@ -45,7 +49,7 @@ public class InputController : MonoBehaviour
 
             pressed = false;
 
-            controller.OnFingerUp();
+            controller?.OnFingerUp();
 
         }
 
@@ -57,7 +61,7 @@ public class InputController : MonoBehaviour
         {
             Vector2 upMousePosition = Input.mousePosition;
 
-            controller.Stretching(new Vector2(
+            controller?.Stretching(new Vector2(
                 (downMousePosition.x - upMousePosition.x) / Screen.width,
                 (downMousePosition.y - upMousePosition.y) / Screen.height
                 )

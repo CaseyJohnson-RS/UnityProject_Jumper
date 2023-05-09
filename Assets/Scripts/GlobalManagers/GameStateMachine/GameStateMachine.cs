@@ -1,4 +1,3 @@
-using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -30,6 +29,7 @@ public static class GameStateMachine
 
     public static void Play()
     {
+        
 
         if (state != GameState.FREE)
         {
@@ -104,6 +104,7 @@ public static class GameStateMachine
 
         foreach (var listener in listeners)
         {
+            
             if (listener is IGameFinishListener finishListener)
             {
                 finishListener.OnFinish();
@@ -114,8 +115,7 @@ public static class GameStateMachine
 
     public static void GetInFreeState()
     {
-
-        if (state != GameState.PLAY && state != GameState.PAUSE)
+        if (state != GameState.PLAY && state != GameState.PAUSE && state != GameState.FINISH)
         {
             Debug.LogWarning("Можно выйти в свободное игровое состояние только из состояния 'FINISH'!");
             return;

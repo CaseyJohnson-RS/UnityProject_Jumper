@@ -8,14 +8,16 @@ public class Character : MonoBehaviour
     private float maxJumpForce = 10f;
 
     [SerializeField]
-    private LayerCheckComponent layerChecker;
+    private LayerCheckComponent groundChecker;
     [SerializeField]
     private LineRenderer lineRenderer;
 
     public UnityEvent OnDie;
+    public UnityEvent OnRevive;
 
     private Rigidbody2D _rb;
     private bool isGrounded = false;
+    public bool IsGrounded {  get { return isGrounded; } }
 
     private bool alive = true;
     private bool isMovable = false;
@@ -29,23 +31,20 @@ public class Character : MonoBehaviour
 
     private void Update()
     {
+        CheckGrounded();
         UpdateIsMovable();
     }
 
     // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
 
-    void UpdateIsMovable()
-    {
-        CheckGrounded();
-
-        isMovable = alive && isGrounded && _rb.velocity.magnitude <= 0.15f;
+    private void UpdateIsMovable()
+    {   
+        isMovable = alive && isGrounded && Mathf.Abs(_rb.velocity.x) <= 0.15f;
     }
 
     private void CheckGrounded()
     {
-        if(alive)
-            
-            isGrounded = layerChecker.isTouched;
+        isGrounded = groundChecker.isTouched;
     }
 
     public void Jump(Vector2 direction)
@@ -57,11 +56,30 @@ public class Character : MonoBehaviour
 
     public void Die()
     {
+        if (!alive) return;
+
         alive = false;
 
         _rb.simulated = false;
 
         OnDie?.Invoke();
+    }
+
+    public void Revive(Vector3 pos)
+    {
+        if (alive) return;
+
+        alive = true;
+
+        transform.position = pos;
+
+        _rb.simulated = true;
+
+        _rb.velocity = Vector3.zero;
+
+        OnRevive?.Invoke();
+
+        
     }
 
     public void StopStratchingTrajectory()
@@ -71,15 +89,14 @@ public class Character : MonoBehaviour
 
     public void StratchTrajectory(Vector2 direction)
     {
-
-        if(isMovable)
+        if (isMovable)
         {
             lineRenderer.enabled = true; // Показываем траекторию
-
+            
             Vector3[] list = SimulateArch(
                 transform.position,
                 direction.normalized,
-                direction.magnitude * maxJumpForce,
+                direction.magnitude * maxJumpForce + _rb.velocity.y*_rb.mass,
                 _rb.mass);
 
             lineRenderer.positionCount = list.Length;
@@ -93,7 +110,7 @@ public class Character : MonoBehaviour
 
     }
 
-    private Vector3[] SimulateArch(Vector2 launchPosition, Vector2 dir, float _force, float _mass, float timeStepInterval = 0.05f, float duration = 4f)
+    private Vector3[] SimulateArch(Vector2 launchPosition, Vector2 dir, float _force, float _mass, float timeStepInterval = 0.1f, float duration = 1f)
     {
         int n = (int)(duration / timeStepInterval);
 
