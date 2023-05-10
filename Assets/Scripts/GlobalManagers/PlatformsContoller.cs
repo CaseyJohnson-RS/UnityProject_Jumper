@@ -77,7 +77,7 @@ public class PlatformsContoller : MonoBehaviour, IGameFinishListener
     {
         // Ќужно хорошенько испытать и подумать над расчетом скорости
         // ѕока это просто линейна€ зависимость
-        float res = 0.003f + score * 0.0001f;
+        float res = 0.003f + score * 0.00005f;
 
         if (ChContoller.Character == null)
         {

@@ -110,7 +110,7 @@ public class Character : MonoBehaviour
 
     }
 
-    private Vector3[] SimulateArch(Vector2 launchPosition, Vector2 dir, float _force, float _mass, float timeStepInterval = 0.1f, float duration = 1f)
+    private Vector3[] SimulateArch(Vector2 launchPosition, Vector2 dir, float _force, float _mass, float timeStepInterval = 0.05f, float duration = 1f)
     {
         int n = (int)(duration / timeStepInterval);
 
@@ -139,7 +139,7 @@ public class Character : MonoBehaviour
 
     private bool CheckForCollision(Vector2 start, Vector2 end)
     {
-        RaycastHit2D hit = Physics2D.Raycast(start, end - start, 0.75f, LayerMask.GetMask("Ground"));
+        RaycastHit2D hit = Physics2D.Raycast(start, end - start, 0.1f, LayerMask.GetMask("Ground"));
 
         return (hit.collider != null);
     }
